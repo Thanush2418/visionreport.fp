@@ -15,10 +15,10 @@
 .message-card {
     background-color: white;
     border-left: 4px solid #3498db;
-    padding: 20px;
-    margin-bottom: 20px;
-    border-radius: 4px;
-    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+    padding: 25px;
+    margin-bottom: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     position: relative;
     animation: fadeIn 0.3s ease-in-out;
 }
@@ -35,9 +35,10 @@
     color: white;
     border: none;
     border-radius: 4px;
-    padding: 5px 10px;
+    padding: 8px 12px;
     cursor: pointer;
     font-size: 14px;
+    font-weight: 500;
 }
 
 .copy-button:hover {
@@ -90,25 +91,97 @@
 }
 
 .login-container {
-    text-align: center;
-    padding: 30px;
-    background-color: #f8f9fa;
-    border-radius: 8px;
-    margin-bottom: 30px;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    margin: 30px auto;
+    overflow: hidden;
+    max-width: 600px;
 }
 
-.user-info {
+.login-content {
+    padding: 40px 30px;
+}
+
+.login-content h2 {
+    font-size: 28px;
+    color: #2c3e50;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.login-step {
+    display: flex;
+    margin-bottom: 25px;
+    align-items: flex-start;
+}
+
+.step-number {
+    background-color: #3498db;
+    color: white;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 20px;
+    font-weight: bold;
+    font-size: 18px;
+    margin-right: 15px;
+    flex-shrink: 0;
+}
+
+.step-content {
+    flex: 1;
+}
+
+.step-content h3 {
+    font-size: 18px;
+    color: #34495e;
+    margin: 0 0 8px 0;
+    text-align: left;
+}
+
+.step-content p {
+    margin: 0;
+    color: #7f8c8d;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.google-signin-button {
+    display: flex;
+    justify-content: center;
+    margin: 30px 0;
+}
+
+.login-note {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 20px;
+    text-align: center;
+}
+
+.login-note p {
+    margin: 0;
+    color: #7f8c8d;
+    font-size: 14px;
+}
+
+.user-info {
+    margin-bottom: 30px;
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
 }
 
 .user-avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    margin-right: 10px;
+    width: 50px;
+    height: 50px;
 }
 
 .user-name {
@@ -124,27 +197,30 @@
     margin: 20px 0;
     padding: 15px;
     background-color: #f8f9fa;
-    border-radius: 4px;
+    border-radius: 8px;
 }
 
 .detail-row {
-    margin: 10px 0;
+    margin: 12px 0;
     display: flex;
-    flex-direction: column;
+    align-items: center;
 }
 
 .detail-label {
-    font-weight: bold;
-    margin-bottom: 5px;
-    color: #555;
+    font-weight: 600;
+    color: #34495e;
+    width: 120px;
+    margin-right: 10px;
 }
 
 .detail-value {
-    padding: 10px;
-    background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+    flex: 1;
+    padding: 12px;
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e6;
+    border-radius: 6px;
     word-break: break-all;
+    transition: all 0.2s ease;
 }
 
 .report-link-value {
@@ -294,4 +370,76 @@
     background: rgba(0,0,0,0.05);
     padding: 2px 6px;
     border-radius: 3px;
+}
+
+/* Added styles for improved Messages UI without navbar */
+.messages-page {
+    min-height: 100vh;
+    background-color: #f7f9fc;
+    position: relative;
+}
+
+.messages-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+.messages-header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding-top: 10px;
+}
+
+.messages-header h1 {
+    font-size: 28px;
+    color: #2c3e50;
+    margin-bottom: 10px;
+}
+
+.messages-header p {
+    color: #7f8c8d;
+    font-size: 16px;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.back-button {
+    display: none;
+}
+
+/* Enhance responsive design */
+@media (max-width: 768px) {
+    .messages-container {
+        padding: 20px 15px;
+    }
+    
+    .messages-header h1 {
+        font-size: 24px;
+    }
+}
+
+/* Dark mode styles - activate with class on parent */
+.dark-mode .messages-page {
+    background-color: #1a1a2e;
+    color: #f0f0f0;
+}
+
+.dark-mode .message-card,
+.dark-mode .user-info {
+    background-color: #262640;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode .detail-value {
+    background-color: #16213e;
+    color: #f0f0f0;
+}
+
+.dark-mode .messages-header h1 {
+    color: #f0f0f0;
+}
+
+.dark-mode .messages-header p {
+    color: #a0a0a0;
 } 

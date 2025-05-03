@@ -51,15 +51,6 @@
   color: #3498db;
 }
 
-.login-link {
-  color: #3498db;
-  font-weight: 500;
-}
-
-.login-link:hover {
-  color: #2980b9;
-}
-
 .logout-button {
   background-color: transparent;
   border: 1px solid #e74c3c;

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { loadStudentData, loadFromServer } from '../../utils/storage';
 import './Messages.css';
 
@@ -11,6 +11,7 @@ const Messages = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [message, setMessage] = useState(null);
   const [searchEmail, setSearchEmail] = useState('');
+  const navigate = useNavigate();
 
   // Initialize Google Sign-In
   useEffect(() => {
@@ -425,7 +426,8 @@ FACE Prep Team`;
       password: passwordValue,
       uploadInfo: uploadInfo,
       createdAt: createdAt,
-      source: source
+      source: source,
+      copyable: true
     });
   };
 
@@ -496,38 +498,64 @@ FACE Prep Team`;
   };
 
   return (
-    <div className="container">
-      <h1>FACE Prep Test Report</h1>
-      
-      <div className={`status-message ${statusMessage.type}`}>
-        {statusMessage.text}
-        {statusMessage.type === 'info' && (
-          <div className="loader" style={{ display: 'inline-block', width: '20px', height: '20px', marginLeft: '10px' }}></div>
+    <div className="messages-page">
+      <div className="messages-container">
+        
+        {statusMessage && (
+          <div className={`status-message ${statusMessage.type}`}>
+            {statusMessage.text}
+          </div>
         )}
-      </div>
-      
-      {!isLoggedIn ? (
-        <div className="login-container">
-          <h2>Please Sign In with Google</h2>
-          <p>You need to sign in with your Google account to view your message.</p>
-          <div id="google-signin-button"></div>
-        </div>
-      ) : (
-        <>
-          <div className="user-info">
-            <img className="user-avatar" src={userInfo.picture} alt="User avatar" />
-            <div>
-              <div className="user-name">{userInfo.name}</div>
-              <div className="user-email">{userInfo.email}</div>
+
+        {!isLoggedIn ? (
+          <div className="login-container">
+            <div className="login-content">
+              <h2>Access Your FACE Prep Message</h2>
+              
+              <div className="login-step">
+                <div className="step-number">1</div>
+                <div className="step-content">
+                  <h3>Sign in with your Google Account</h3>
+                  <p>Use the same email address that was provided during registration</p>
+                </div>
+              </div>
+              
+              <div className="login-step">
+                <div className="step-number">2</div>
+                <div className="step-content">
+                  <h3>View Your Message</h3>
+                  <p>After signing in, your personalized message will be displayed automatically</p>
+                </div>
+              </div>
+              
+              <div className="login-step">
+                <div className="step-number">3</div>
+                <div className="step-content">
+                  <h3>Access Report Details</h3>
+                  <p>Your message contains the report link and password needed to view your test results</p>
+                </div>
+              </div>
+              
+              <div id="google-signin-button" className="google-signin-button"></div>
+              
+              <div className="login-note">
+                <p>Having trouble? Contact support at support@faceprep.in</p>
+              </div>
             </div>
           </div>
-          
-          <div id="messageContainer">
-            {message && message.error ? (
-              <div className="no-results">
-                <p className="error-text">{message.text}</p>
+        ) : (
+          <>
+            {userInfo && (
+              <div className="user-info">
+                <img src={userInfo.picture} alt={userInfo.name} className="user-avatar" />
+                <div>
+                  <div className="user-name">{userInfo.name}</div>
+                  <div className="user-email">{userInfo.email}</div>
+                </div>
               </div>
-            ) : message ? (
+            )}
+
+            {message && !message.error && (
               <div className="message-card">
                 <div className="message-content">
                   <p>Dear {message.name},</p>
@@ -565,15 +593,16 @@ FACE Prep Team`;
                 </div>
                 <button className="copy-button" onClick={copyMessage}>Copy Message</button>
               </div>
-            ) : (
-              <div className="loading-container">
-                <div className="loader"></div>
-                <p>Retrieving your message...</p>
+            )}
+
+            {message && message.error && (
+              <div className="no-results">
+                <div className="error-text">{message.text}</div>
               </div>
             )}
-          </div>
-        </>
-      )}
+          </>
+        )}
+      </div>
     </div>
   );
 };

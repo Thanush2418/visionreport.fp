@@ -70,21 +70,4 @@
   border-radius: 4px;
   margin-bottom: 20px;
   font-size: 14px;
-}
-
-.login-footer {
-  margin-top: 24px;
-  text-align: center;
-  font-size: 14px;
-  color: #666;
-}
-
-.login-footer a {
-  color: #4a90e2;
-  text-decoration: none;
-  font-weight: 500;
-}
-
-.login-footer a:hover {
-  text-decoration: underline;
 } 

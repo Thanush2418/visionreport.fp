@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate, Navigate, Link } from 'react-router-dom';
+import { useNavigate, Navigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import './Login.css';
 
@@ -59,9 +59,6 @@ function Login() {
           </div>
           <button type="submit" className="login-button">Login</button>
         </form>
-        <div className="login-footer">
-          <p>Want to view messages without login? <Link to="/messages">Go to Messages</Link></p>
-        </div>
       </div>
     </div>
   );

@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import Upload from './components/Upload/Upload';
 import Messages from './components/Messages/Messages';
 import Login from './components/Login/Login';
@@ -8,24 +8,41 @@ import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 import { AuthProvider } from './context/AuthContext';
 import './App.css';
 
+// NavbarWrapper component to conditionally render navbar
+function NavbarWrapper() {
+  const location = useLocation();
+  // Hide navbar on Messages page
+  const shouldShowNavbar = location.pathname !== '/messages';
+  
+  return shouldShowNavbar ? <Navbar /> : null;
+}
+
 function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
         <div className="app">
-          <Navbar />
-          <div className="content">
-            <Routes>
-              <Route path="/login" element={<Login />} />
-              <Route path="/messages" element={<Messages />} />
-              
-              <Route element={<ProtectedRoute />}>
-                <Route path="/" element={<Upload />} />
-              </Route>
-              
-              <Route path="*" element={<Navigate to="/" />} />
-            </Routes>
-          </div>
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            
+            <Route element={<ProtectedRoute />}>
+              <Route path="/" element={
+                <>
+                  <Navbar />
+                  <div className="content">
+                    <Upload />
+                  </div>
+                </>
+              } />
+              <Route path="/messages" element={
+                <div className="content full-width">
+                  <Messages />
+                </div>
+              } />
+            </Route>
+            
+            <Route path="*" element={<Navigate to="/" />} />
+          </Routes>
         </div>
       </BrowserRouter>
     </AuthProvider>

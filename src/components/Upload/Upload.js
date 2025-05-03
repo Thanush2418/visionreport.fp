@@ -473,7 +473,7 @@ const Upload = () => {
           {renderDataTable()}
           
           <div className="data-storage-info">
-            <p><strong>Storage Location:</strong> Firebase Firestore - Collection: <code>excelData</code></p>
+            <p><strong>Storage Location:</strong> MySQL Database - Table: <code>student_reports</code></p>
             <p><strong>Data Type:</strong> Excel Extraction</p>
             <p><strong>Upload Time:</strong> {uploadInfo ? uploadInfo.uploadTime : 'Unknown'}</p>
           </div>
