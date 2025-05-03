@@ -25,6 +25,7 @@ function App() {
           <Routes>
             <Route path="/login" element={<Login />} />
             
+            {/* Home route with protection */}
             <Route element={<ProtectedRoute />}>
               <Route path="/" element={
                 <>
@@ -34,12 +35,14 @@ function App() {
                   </div>
                 </>
               } />
-              <Route path="/messages" element={
-                <div className="content full-width">
-                  <Messages />
-                </div>
-              } />
             </Route>
+            
+            {/* Messages route without protection - directly accessible */}
+            <Route path="/messages" element={
+              <div className="content full-width">
+                <Messages />
+              </div>
+            } />
             
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>

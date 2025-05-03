@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { loadStudentData, loadFromServer } from '../../utils/storage';
+import { loadFromServer } from '../../utils/storage';
 import './Messages.css';
 
 const Messages = () => {
   const [userData, setUserData] = useState(null);
   const [userEmail, setUserEmail] = useState('');
   const [userInfo, setUserInfo] = useState(null);
-  const [statusMessage, setStatusMessage] = useState({ type: 'info', text: 'Loading data from server...' });
+  const [statusMessage, setStatusMessage] = useState({ type: 'info', text: 'Please sign in to view your message' });
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [message, setMessage] = useState(null);
   const [searchEmail, setSearchEmail] = useState('');
@@ -42,42 +42,10 @@ const Messages = () => {
           text: 'Retrieving your message...'
         });
         
-        // Optimized data retrieval sequence
         try {
-          // Parallel requests to optimize performance
-          // Initiate localStorage check and server request simultaneously
-          const localDataPromise = new Promise(resolve => {
-            const localData = loadStudentData();
-            if (localData) {
-              const matchingLocal = localData.find(item => 
-                item.email && item.email.toLowerCase() === normalizedEmail
-              );
-              resolve(matchingLocal || null);
-            } else {
-              resolve(null);
-            }
-          });
+          // Load data directly from server
+          const serverData = await loadFromServer(normalizedEmail);
           
-          // Start server request immediately
-          const serverDataPromise = loadFromServer(normalizedEmail);
-          
-          // Whichever resolves first will be used
-          let displayedFromCache = false;
-          
-          // First try quickly from cache
-          const localResult = await localDataPromise;
-          if (localResult) {
-            displayedFromCache = true;
-            displayMessage(localResult);
-            setUserData([localResult]);
-            setStatusMessage({
-              type: 'success',
-              text: 'Message retrieved successfully.'
-            });
-          }
-          
-          // Then get potentially fresher data from server
-          const serverData = await serverDataPromise;
           if (serverData && Array.isArray(serverData) && serverData.length > 0) {
             // Find exact match
             const matchingData = serverData.find(item => 
@@ -85,37 +53,27 @@ const Messages = () => {
             );
             
             if (matchingData) {
-              // Only update UI if we didn't already display from cache
-              // or if the data is actually different
-              const shouldUpdate = !displayedFromCache || 
-                JSON.stringify(matchingData) !== JSON.stringify(localResult);
-              
-              if (shouldUpdate) {
-                displayMessage(matchingData);
-                setUserData([matchingData]);
-                setStatusMessage({
-                  type: 'success',
-                  text: 'Message retrieved successfully.'
-                });
-              }
+              displayMessage(matchingData);
+              setUserData([matchingData]);
+              setStatusMessage({
+                type: 'success',
+                text: 'Message retrieved successfully.'
+              });
               return;
             }
           }
           
-          // If no data found and nothing displayed from cache
-          if (!displayedFromCache) {
-            setMessage({
-              error: true,
-              text: `No message found for your email address (${normalizedEmail}).`
-            });
-            setStatusMessage({
-              type: 'warning',
-              text: 'No matching message found.'
-            });
-          }
-          
+          // No data found
+          setMessage({
+            error: true,
+            text: `No message found for your email address (${normalizedEmail}).`
+          });
+          setStatusMessage({
+            type: 'warning',
+            text: 'No matching message found.'
+          });
         } catch (error) {
-          console.error("Error auto-loading message:", error);
+          console.error("Error loading message:", error);
           setMessage({
             error: true,
             text: 'Error retrieving your message. Please try refreshing the page.'
@@ -203,7 +161,7 @@ const Messages = () => {
         }
       }
       
-      // Try to load data specifically for the signed-in user's email
+      // Load data directly from the server
       console.log("Loading message for:", normalizedEmail);
       const serverData = await loadFromServer(normalizedEmail);
       
@@ -214,24 +172,10 @@ const Messages = () => {
         );
         
         if (matchingData.length > 0) {
-          // Save matching data to application storage
+          // Save matching data
           setUserData(matchingData);
           showSuccessMessage(`Message retrieved successfully.`);
           return matchingData;
-        }
-      }
-      
-      // If no matching data from server, check local storage
-      const regularData = loadStudentData();
-      if (regularData) {
-        // Filter for matching email only
-        const matchingLocalData = regularData.filter(item => 
-          item.email && item.email.toLowerCase() === normalizedEmail
-        );
-        
-        if (matchingLocalData.length > 0) {
-          setUserData(matchingLocalData);
-          return matchingLocalData;
         }
       }
       
@@ -240,24 +184,6 @@ const Messages = () => {
       return null;
     } catch (error) {
       console.error("Error loading data:", error);
-      // On error, try local storage
-      try {
-        const regularData = loadStudentData();
-        if (regularData && userEmail) {
-          // Filter for matching email only
-          const matchingLocalData = regularData.filter(item => 
-            item.email && item.email.toLowerCase() === userEmail.toLowerCase()
-          );
-          
-          if (matchingLocalData.length > 0) {
-            setUserData(matchingLocalData);
-            return matchingLocalData;
-          }
-        }
-      } catch (localError) {
-        console.error("Local storage error:", localError);
-      }
-      
       setUserData([]);
       return null;
     }
@@ -273,7 +199,7 @@ const Messages = () => {
   const showWarningMessage = (text) => {
     setStatusMessage({
       type: 'warning',
-      text: text || 'Using local data as fallback.'
+      text: text || 'No matching data found.'
     });
   };
 
@@ -357,7 +283,7 @@ const Messages = () => {
         }
       }
       
-      // If we don't have data yet, load it
+      // If we don't have data yet, load it from server
       const loadedData = await loadDataFromServer();
       
       if (loadedData && Array.isArray(loadedData) && loadedData.length > 0) {
