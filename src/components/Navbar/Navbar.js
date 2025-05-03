@@ -12,26 +12,30 @@ function Navbar() {
     navigate('/login');
   };
 
-  if (!isAuthenticated) {
-    return null;
-  }
-
   return (
     <nav className="navbar">
       <div className="navbar-container">
         <div className="logo">
-          <Link to="/">FACE Prep</Link>
+          <Link to={isAuthenticated ? "/" : "/messages"}>FACE Prep</Link>
         </div>
         <ul className="nav-menu">
-          <li className="nav-item">
-            <Link to="/" className="nav-link">Home</Link>
-          </li>
+          {isAuthenticated && (
+            <li className="nav-item">
+              <Link to="/" className="nav-link">Home</Link>
+            </li>
+          )}
           <li className="nav-item">
             <Link to="/messages" className="nav-link">Messages</Link>
           </li>
-          <li className="nav-item">
-            <button onClick={handleLogout} className="logout-button">Logout</button>
-          </li>
+          {isAuthenticated ? (
+            <li className="nav-item">
+              <button onClick={handleLogout} className="logout-button">Logout</button>
+            </li>
+          ) : (
+            <li className="nav-item">
+              <Link to="/login" className="nav-link login-link">Login</Link>
+            </li>
+          )}
         </ul>
       </div>
     </nav>

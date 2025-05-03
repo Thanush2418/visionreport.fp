@@ -1,0 +1,21 @@
+# Enable handling of PHP files
+<FilesMatch \.php$>
+  SetHandler application/x-httpd-php
+</FilesMatch>
+
+# Enable Cross-Origin Resource Sharing (CORS)
+Header set Access-Control-Allow-Origin "*"
+Header set Access-Control-Allow-Methods "GET, POST, OPTIONS"
+Header set Access-Control-Allow-Headers "Content-Type, Authorization"
+Header set Access-Control-Allow-Credentials "true"
+
+# Handle OPTIONS preflight requests
+RewriteEngine On
+RewriteCond %{REQUEST_METHOD} OPTIONS
+RewriteRule ^(.*)$ $1 [R=200,L]
+
+# Set default index file
+DirectoryIndex index.php
+
+# Prevent directory listing
+Options -Indexes 

@@ -68,13 +68,13 @@ export const saveToServer = async (data) => {
       });
     }
     
-    console.log("Saving data to server...");
+    console.log("Saving data to MySQL server...");
     
     // Then attempt to save to the server
     const result = await saveDataToServer(data);
     
     if (result && result.length > 0) {
-      console.log(`Successfully saved ${result.length} records to database`);
+      console.log(`Successfully saved ${result.length} records to MySQL database`);
       return true;
     } else {
       console.warn("No records were saved to database, using local storage backup");
@@ -209,7 +209,7 @@ export const loadFromServer = async (email = null) => {
   
   // If no valid cache, fetch from server
   try {
-    console.log(`Retrieving data from database${email ? ` for email: ${email}` : ''}`);
+    console.log(`Retrieving data from MySQL database${email ? ` for email: ${email}` : ''}`);
     
     let serverData;
     
@@ -250,72 +250,58 @@ export const loadFromServer = async (email = null) => {
       }
       
       return serverData;
+    } else {
+      console.log(`No data retrieved from server${email ? ` for email: ${email}` : ''}`);
+      return [];
     }
+  } catch (error) {
+    console.error('Error loading data from server:', error);
     
-    console.warn("No data found in database, checking localStorage backup");
-    
-    // Fall back to localStorage if no data from server
-    const data = localStorage.getItem(SERVER_DATA_KEY);
-    if (data) {
-      const parsedData = JSON.parse(data);
-      
-      if (email && Array.isArray(parsedData)) {
-        // Filter by email if requested
-        return parsedData.filter(item => 
+    // Try to use local fallback on error
+    if (email) {
+      const localData = loadStudentData();
+      if (localData && Array.isArray(localData)) {
+        const matchingData = localData.filter(item => 
           item.email && item.email.toLowerCase() === email.toLowerCase()
         );
+        
+        if (matchingData.length > 0) {
+          console.log("Using local data fallback for error recovery");
+          return matchingData;
+        }
       }
-      
-      return parsedData;
     }
     
-    return null;
-  } catch (error) {
-    console.error('Error retrieving data from database:', error);
-    // Fall back to localStorage data
-    try {
-      const data = localStorage.getItem(SERVER_DATA_KEY);
-      if (data) {
-        const parsedData = JSON.parse(data);
-        
-        if (email && Array.isArray(parsedData)) {
-          // Filter by email if requested
-          return parsedData.filter(item => 
-            item.email && item.email.toLowerCase() === email.toLowerCase()
-          );
-        }
-        
-        return parsedData;
-      }
-      return null;
-    } catch (localError) {
-      console.error('Error loading data from localStorage fallback:', localError);
-      return null;
-    }
+    // If nothing found in localStorage either
+    return [];
   }
 };
 
-// Clear all stored data
+// Clear all cached data
 export const clearAllData = () => {
   try {
-    // Clear all localStorage items
+    // Clear localStorage
     localStorage.removeItem(STUDENT_DATA_KEY);
     localStorage.removeItem(SERVER_DATA_KEY);
     localStorage.removeItem(CACHE_EXPIRY_KEY);
     
-    // Clear email-specific cache entries
+    // Clear email-specific entries
     for (const key in localStorage) {
       if (key.startsWith(EMAIL_CACHE_PREFIX)) {
         localStorage.removeItem(key);
       }
     }
     
-    // Reset memory cache
-    memoryCache = { data: null, timestamp: 0, emailCache: {} };
+    // Clear memory cache
+    memoryCache = {
+      data: null,
+      timestamp: 0,
+      emailCache: {}
+    };
     
     return true;
   } catch (error) {
-    console.error('Error clearing data:', error);
+    console.error('Error clearing cached data:', error);
     return false;
   }
 }; 

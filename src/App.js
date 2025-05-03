@@ -17,10 +17,10 @@ function App() {
           <div className="content">
             <Routes>
               <Route path="/login" element={<Login />} />
+              <Route path="/messages" element={<Messages />} />
               
               <Route element={<ProtectedRoute />}>
                 <Route path="/" element={<Upload />} />
-                <Route path="/messages" element={<Messages />} />
               </Route>
               
               <Route path="*" element={<Navigate to="/" />} />
